@@ -51,11 +51,30 @@ with api.connect('119.147.212.81', 7709):  #get data
     in_pool_days = 5
     stoke_pool = {}
     #print (all_daily)
+
+    open = 1000.0
     for i in range(len(all_daily)):
         date_of_today = all_daily[i]
+        delta_o = 0.0
+        delta_c = 0.0
+            
+        for j in stoke_pool:
+            if stoke_pool[j] == 1:
+                stoke_pool.pop(j)
+            else :
+                stoke_pool[j] -= 1
         for j in daily_stoke[date_of_today]:
             if check_limit_up(daily_stoke[date_of_today][j], daily_stoke[all_daily[i-1]][j]) :
                 stoke_pool[j] = in_pool_days
+
+        if len(stoke_pool):
+            for j in stoke_pool:
+                delta_o += (daily_stoke[date_of_today][j]['open'] - daily_stoke[all_daily[i-1]][j]['close']) / daily_stoke[all_daily[i-1]][j]['close']
+                delta_c += (daily_stoke[date_of_today][j]['close'] - daily_stoke[all_daily[i-1]][j]['close']) / daily_stoke[all_daily[i-1]][j]['close']
+            delta_o /= len(stoke_pool)
+            delta_c /= len(stoke_pool)
+            print(date_of_today, delta_o, delta_c)
+
             
     #计算日k
 
